@@ -198,8 +198,8 @@ bash ../FCST/procesa_conc.sh
 
 | Herramienta | Versión / Fuente | Función |
 |---|---|---|
-| **CALPUFF** | [src.com/calpuff](http://www.src.com/calpuff/calpuff1.htm) | Modelo de dispersión atmosférica Lagrangiano |
-| **CALPOST** | src.com/calpuff | Postprocesador de concentraciones de CALPUFF |
+| **CALPUFF** | [calpuff](https://www.calpuff.org/) | Modelo de dispersión atmosférica Lagrangiano |
+| **CALPOST** | [calpost](https://www.calpuff.org/)| Postprocesador de concentraciones de CALPUFF |
 | **CALMET.DAT** | Año 2023 completo (8 760 h) | Campos meteorológicos 3D de entrada |
 | **Intel oneAPI** | `/opt/intel/oneapi/` | Compilador Fortran para ejecutables CALPUFF/CALPOST |
 | **Bash** | ≥ 4.0 | Ejecución de `combina_conc.sh` y `procesa_conc.sh` |
