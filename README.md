@@ -69,15 +69,15 @@ Los campos meteorológicos tridimensionales (`CALMET.DAT`) abarcan el año 2023 
 
 Cada subdirectorio simula una empresa o grupo de empresas con una emisión unitaria de **1 Mg/año por especie**. Al usar esta emisión unitaria se obtiene directamente el **factor de dilución** (concentración por unidad de emisión) específico de cada empresa. Posteriormente, este factor se escala con las emisiones reales de cada planta para obtener las concentraciones ambientales representativas.
 
-| Directorio | Fuentes simuladas | Especies |
-|---|---|---|
-| `FCST` | 1–40 (40 fuentes) | 12 |
-| `S0148` | 1–48 (48 fuentes) | 12 |
-| `S0112` | 1–12 | 12 |
-| `S1324` | 13–24 | 12 |
-| `S2536` | 25–36 | 12 |
-| `S3740` | 37–40 | 12 |
-| `S3748` | 37–48 | 12 |
+| Directorio | Fuentes simuladas | Especies | Emisiones  |
+|---|---|---|---|
+| `FCST` | 1–40 (40 fuentes) | 12 | Originales |
+| `S0148` | 1–48 (48 fuentes) | 12 | Originales
+| `S0112` | 1–12 | 12 | 1 Mg/año por especie |
+| `S1324` | 13–24 | 12 | 1 Mg/año por especie |
+| `S2536` | 25–36 | 12 | 1 Mg/año por especie |
+| `S3740` | 37–40 | 4 | 1 Mg/año por especie |
+| `S3748` | 37–48 | 12 | 1 Mg/año por especie |
 
 ### 3. Cálculo de concentraciones ambientales
 
@@ -88,7 +88,7 @@ CALPOST genera un archivo por contaminante con la concentración media anual en 
 El script `procesa_conc.sh` lee los valores **IUR** (*Inhalation Unit Risk*, riesgo cancerígeno incremental por unidad de concentración en µg/m³) desde `iur.txt` y calcula para cada receptor y contaminante:
 
 ```
-concentración [µg/m³] = concentración [g/m³] × 1 000
+concentración [µg/m³] = concentración [mg/m³] × 1 000
 riesgo cancerígeno    = concentración [µg/m³] × IUR
 ```
 
@@ -116,7 +116,7 @@ El cálculo de riesgo no cancerígeno y la agregación por empresa se realizan f
         ▼
 [procesa_conc.sh + iur.txt]
   Aplica IUR → riesgo cancerígeno por receptor y compuesto
-        │  → concentraciones_combinadas.csv (con riesgos)
+        │  → riesgo_malla.csv (con riesgos)
         ▼
 [Excel]
   Escala con emisiones reales, agrega por empresa y sustancia
@@ -171,7 +171,7 @@ bash combina_conc.sh
 
 Aplica los factores IUR para calcular el riesgo cancerígeno incremental por receptor.
 
-**Entradas:** archivos `RANK(0)_*_481HR_CONC.CSV` + `iur.txt`  
+**Entradas:** archivos `RANK(0)_*_8760HR_CONC.CSV` + `iur.txt`  
 **Salida:** `concentraciones_combinadas.csv` con riesgo cancerígeno `[adimensional]` por receptor y contaminante
 
 **Conversión de unidades:** g/m³ → µg/m³ (× 1 000) → riesgo (× IUR)
@@ -190,7 +190,7 @@ bash ../FCST/procesa_conc.sh
 | `riesgos.csv` | Riesgo cancerígeno agregado por industria | Excel |
 | `riesgosC.csv` | Riesgo cancerígeno agregado por contaminante | Excel |
 | `ncancerI.csv` | Riesgo no cancerígeno agregado por industria | Excel |
-| `ncancerC.csv` | Riesgo no cancerígeno agregado por sustancia | Excel |
+| `ncancerC.csv` | Riesgo no cancerígeno agregado por contaminante | Excel |
 
 ---
 
