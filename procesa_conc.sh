@@ -6,17 +6,17 @@
 #
 # Metodología:
 #   1. Lee los valores IUR (Inhalation Unit Risk) desde iur.txt
-#   2. Por cada contaminante con archivo RANK(0)_*_481HR_CONC.CSV:
+#   2. Por cada contaminante con archivo RANK(0)_*_8760HR_CONC.CSV:
 #      - Convierte concentración de g/m³ a µg/m³
 #      - Multiplica por IUR para obtener riesgo cancerígeno
 #   3. Consolida todos los contaminantes en un único CSV por receptor
 #
 # Entrada:
 #   - iur.txt                        : tabla de valores IUR por sustancia
-#   - RANK(0)_*_481HR_CONC.CSV       : archivos de concentración de CALPOST
+#   - RANK(0)_*_8760HR_CONC.CSV       : archivos de concentración de CALPOST
 #
 # Salida:
-#   - concentraciones_combinadas.csv : riesgo por receptor y contaminante
+#   - riesgos_malla.csv : riesgo por receptor y contaminante
 #
 # Uso:
 #   bash procesa_conc.sh
@@ -28,7 +28,7 @@ IFS=$'\n\t'         # Separador de campos: solo saltos de línea y tabuladores (
 # ------------------------------------------------------------------------------
 # Configuración general
 # ------------------------------------------------------------------------------
-OUT="concentraciones_combinadas.csv"               # Archivo CSV de salida con riesgos combinados
+OUT="riesgos_malla.csv"               # Archivo CSV de salida con riesgos combinados
 TMPDIR="$(mktemp -d -t tmp_conc_XXXX)"            # Directorio temporal único para archivos intermedios
 trap 'rm -rf "$TMPDIR"' EXIT                       # Limpieza automática del directorio temporal al salir (éxito o error)
 
@@ -64,17 +64,17 @@ echo
 
 # ==============================================================================
 # PASO 2: Procesar cada archivo de concentración de CALPOST
-# Patrón de archivo: RANK(0)_<COMPUESTO>_481HR_CONC.CSV
+# Patrón de archivo: RANK(0)_<COMPUESTO>_8760HR_CONC.CSV
 # Contiene: coordenadas de receptor (x_km, y_km) y concentración en g/m³
 # ==============================================================================
 shopt -s nullglob   # Si el glob no encuentra archivos, devuelve lista vacía (no falla)
 
-for file in RANK\(0\)_*_481HR_CONC.CSV; do   # Los paréntesis se escapan para el shell
+for file in RANK\(0\)_*_8760HR_CONC.CSV; do   # Los paréntesis se escapan para el shell
   [[ ! -f "$file" ]] && continue              # Saltar si por alguna razón no es un archivo regular
 
   # ---- Extraer nombre del compuesto desde el nombre del archivo ----
   base="${file#RANK(0)_}"                     # Eliminar prefijo  "RANK(0)_"
-  comp="${base%_481HR_CONC.CSV}"              # Eliminar sufijo   "_481HR_CONC.CSV"
+  comp="${base%_8760HR_CONC.CSV}"              # Eliminar sufijo   "_8760HR_CONC.CSV"
   comp_u=$(echo "$comp" | tr '[:lower:]' '[:upper:]' | tr -d ' ')   # Normalizar a mayúsculas
 
   echo "Procesando: $file -> $comp_u"
@@ -118,7 +118,7 @@ done
 # ==============================================================================
 files=( "$TMPDIR"/*.csv )
 if [[ ${#files[@]} -eq 0 ]]; then
-  echo "No se procesó ningún archivo (¿existen los RANK(0)_*_481HR_CONC.CSV?)."
+  echo "No se procesó ningún archivo (¿existen los RANK(0)_*_8760HR_CONC.CSV?)."
   exit 1
 fi
 
